@@ -1,46 +1,52 @@
-# Metabase x Docker
+# Metabase with Docker 🐳
 
-Quick start guide for running Metabase with PostgreSQL in Docker.
+A production-ready setup for running Metabase with PostgreSQL using Docker.
 
 ## 🚀 Quick Start
 
-Set your environment variables and you're good to go
+1. Clone this repository
+2. Configure your environment:
 
 ```bash
 cp .env.example .env
-# Now edit the .env file with your own secure credentials
+# Edit .env with secure credentials
+```
+
+3. Launch the stack:
+
+```bash
 docker compose up -d
 ```
 
-Voilà ! Access Metabase at http://localhost:3000
+📝 Access Metabase at [http://localhost:3000](http://localhost:3000)
 
-## 🛠️ Maintenance
-
-Common tasks:
+## 🛠️ Management Commands
 
 ```bash
-# View logs
+# Monitor logs
 docker compose logs -f
 
-# Restart services
-docker compose restart
+# Service operations
+docker compose restart    # Restart all services
+docker compose down      # Stop all services
+docker compose down -v   # ⚠️ Stop and erase all data
 
-# Stop all services
-docker compose down
-
-# Stop and remove volume (⚠️ erases all data)
-docker compose down -v
-
-# Create a local database backup
-sh backup.sh
+# Backup database
+./backup.sh
 ```
 
-## ℹ️ Caveats
+## ⚡ Production Considerations
 
-- The webserver is up to you. In a production environment, you'd typically want to put a reverse proxy in front of this.
-- The backup script is doing local backups only. In a production environment, you want to send these backups in many other places.
+- **Security**: Deploy behind a reverse proxy (nginx, traefik) with SSL
+- **Backups**: Implement off-site backup strategy
+- **Monitoring**: Set up container health monitoring
+- **Updates**: Enable automated security updates
 
-## 🚨 Troubleshooting
+## 🔍 Troubleshooting
 
-- If Metabase fails to start, check logs: `docker compose logs metabase`
-- Container health status: `docker compose ps`
+Run these commands if you encounter issues:
+
+```bash
+docker compose ps         # Check container status
+docker compose logs metabase   # View Metabase logs
+```
