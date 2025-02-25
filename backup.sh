@@ -4,7 +4,7 @@
 set -euo pipefail
 
 # Load environment variables
-source .env
+source "$( dirname "${BASH_SOURCE[0]}" )/.env"
 
 # Define variables
 DATE=$(date +%Y-%m-%d_%H%M%S)
