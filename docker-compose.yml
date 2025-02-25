@@ -1,0 +1,66 @@
+services:
+  metabase:
+    image: metabase/metabase:v0.53.3.x
+    container_name: metabase_app
+    hostname: metabase
+    ports:
+      - ${PORT}:3000
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_HOST: postgres
+      MB_DB_PORT: 5432
+      MB_DB_DBNAME: ${PG_DB}
+      MB_DB_USER: ${PG_USR}
+      MB_DB_PASS: ${PG_PWD}
+    depends_on:
+      - postgres
+    volumes:
+      # This is a security measure to prevent the container from blocking on /dev/random 
+      - /dev/urandom:/dev/random:ro 
+    networks:
+      - metanet1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+  
+  postgres:
+    image: postgres:17
+    container_name: metabase_db
+    hostname: postgres
+    environment:
+      POSTGRES_USER: ${PG_USR}
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_PASSWORD: ${PG_PWD}
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - metanet1
+    healthcheck:
+      test: pg_isready -U ${PG_USR} -d ${PG_DB}
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+networks:
+  metanet1:
+    driver: bridge
+
+volumes:
+  postgres-data:
