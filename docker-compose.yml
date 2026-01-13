@@ -1,6 +1,6 @@
 services:
   metabase:
-    image: metabase/metabase:v0.56.x
+    image: metabase/metabase:v0.57.x
     container_name: metabase_app
     hostname: metabase
     ports:
@@ -33,7 +33,7 @@ services:
         max-file: "3"
   
   postgres:
-    image: postgres:17
+    image: postgres:18
     container_name: metabase_db
     hostname: postgres
     environment:
